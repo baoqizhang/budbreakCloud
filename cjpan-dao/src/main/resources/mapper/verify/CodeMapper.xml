@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.budbreak.pan.mapper.verify.CodeMapper">
+    <resultMap type="com.budbreak.pan.vo.verify.CodeVO" id="codeResultMap">
+          <id column="fd_id" property="id"/>
+          <result column="fd_customName" property="customName"/>
+          <result column="fd_date" property="date"/>
+          <result column="fd_operatePerson" property="operatePerson"/>
+          <result column="fd_registerCode" property="registerCode"/>
+          <result column="fd_state" property="state"/>
+          <result column="fd_deleted" property="deleted"/>
+          <result column="fd_createDate" property="createDate"/>
+          <result column="fd_updateDate" property="updateDate"/>
+          <result column="fd_reserved1" property="reserved1"/>
+          <result column="fd_reserved2" property="reserved2"/>
+    </resultMap>
+
+    <!-- select Code by id -->
+    <select id="selectDetailById" resultMap="codeResultMap" parameterType="java.lang.Integer">
+        SELECT
+            *
+        FROM verify_code
+        WHERE
+            fd_id = #{id}
+            AND fd_deleted = false
+    </select>
+
+    <select id="selectOwnPage" resultMap="codeResultMap" parameterType="java.util.Map">
+        SELECT
+            *
+        FROM verify_code
+        <where>
+            <if test="param.searchWord != null and param.searchWord !='' ">
+                AND fd_id= #{param.searchWord}
+            </if>
+            AND fd_deleted = false
+        </where>
+        ORDER BY fd_createDate DESC
+    </select>
+    <select id="selectByRegisterCode" resultMap="codeResultMap">
+        SELECT *
+        FROM verify_code
+        WHERE
+            fd_registerCode = #{registerCode}
+        AND fd_customName = #{userName}
+        AND fd_deleted = false
+    </select>
+
+</mapper>

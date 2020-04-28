@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.budbreak.pan.mapper.hibernate.SequenceMapper">
+    <resultMap type="com.budbreak.pan.vo.hibernate.SequenceVO" id="sequenceResultMap">
+          <id column="next_val" property="val"/>
+    </resultMap>
+
+    <!-- select Sequence by id -->
+    <select id="selectDetailById" resultMap="sequenceResultMap" parameterType="java.lang.Integer">
+        SELECT
+            *
+        FROM hibernate_sequence
+        WHERE
+            next_val = #{id}
+            AND fd_deleted = false
+    </select>
+
+    <select id="selectOwnPage" resultMap="sequenceResultMap" parameterType="java.util.Map">
+        SELECT
+            *
+        FROM hibernate_sequence
+        <where>
+            <if test="param.searchWord != null and param.searchWord !='' ">
+                AND fd_id= #{param.searchWord}
+            </if>
+            AND fd_deleted = false
+        </where>
+        ORDER BY fd_createDate DESC
+    </select>
+
+</mapper>
