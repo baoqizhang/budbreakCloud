@@ -355,14 +355,14 @@
             data: {fileName: tem, path: nowUserPath, expireDay: expireDay},
             dataType: "json",
             success: function (data) {
-                if (data.success) {
+                if (data.code == "200") {
                     document.getElementById("sharetext").style.display="block";
                     document.getElementById("shareLinkCopyCancel").style.display="block";
                     var rootLink = window.location.host;
                     if($("#outer_share").is(":checked")){
                         rootLink = "cjpan.jfz.me";
                     }
-                    var tgLink = "http://" + rootLink + "/sharefile?link=" + data.msg;
+                    var tgLink = "http://" + rootLink + "/sharefile?link=" + data.data;
                     var tgReLink = tgLink.split("##");
                     $('#shareLink').text(tgReLink[0]);
                     $('#shareLink').attr({href: tgReLink[0]});
@@ -457,7 +457,7 @@
             $.post(url, param, function (data) {
                 // 已上传则跳过，否则继续上传
                 if (data.code == "200") {
-                    alert(data);
+                    // alert(data);
                     deferred.reject();
                 } else {
                     // alert(data);
@@ -494,7 +494,7 @@
         // swf文件路径
         swf: 'webuploader/Uploader.swf',
         // 文件接收服务端。
-        server: '/upload',
+        server: '/uploadServlet',
         // 选择文件的按钮。可选。
         // 内部根据当前运行是创建，可能是input元素，也可能是flash.
         pick: '#picker',
@@ -1225,7 +1225,7 @@
             },
             dataType: "json",
             success: function (data) {
-                if (data.success == true) {
+                if (data.code == "200") {
                     alert("移动成功！");
                 }
                 else {

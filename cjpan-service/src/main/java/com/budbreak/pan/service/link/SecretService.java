@@ -28,4 +28,23 @@ public interface SecretService extends IService<Secret> {
      */
     void updateEntity(Secret entity);
 
+    /**
+     * 通过加密链接查找
+     * @param link
+     * @return
+     */
+    SecretVO selectSecretBySecretLink(String link);
+
+    /**
+     *  增加下载次数
+     * @param linkSecret
+     */
+    void addOneToDownloadNum(SecretVO linkSecret);
+
+    /**
+     * 通过本地链接+用户名查找
+     * @param localLink
+     * @param userName
+     */
+    SecretVO selectLinkSecretByLocalLinkAndUserName(String localLink, String userName);
 }

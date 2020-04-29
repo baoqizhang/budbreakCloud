@@ -77,7 +77,7 @@ public interface FileService {
      * @param path
      * @return
      */
-    InvokeResult uploadSevlet(HttpServletRequest request, MultipartFile file, String path);
+    void uploadServlet(HttpServletRequest request, MultipartFile file, String path);
 
     /**
      * 上传前检查
@@ -91,7 +91,7 @@ public interface FileService {
      * @param request
      * @param path
      */
-    InvokeResult mergeChunks(HttpServletRequest request, String path);
+    void mergeChunks(HttpServletRequest request, String path);
 
     /**
      * 搜索文件
@@ -111,4 +111,39 @@ public interface FileService {
      * @return
      */
     InvokeResult fileReName(String oldName, String newName, String path, HttpServletRequest request);
+
+
+    /**
+     * 验证提取码是否正确
+     * @param arr
+     * @param localLink
+     * @return
+     */
+    InvokeResult shareCallBack(String[] arr, String[] localLink);
+
+    /**
+     * 生成提取码
+     * @param expireDay
+     * @param fileName
+     * @param path
+     * @param request
+     */
+    InvokeResult generateShareLink(String expireDay, String fileName, String path, HttpServletRequest request);
+
+    /**
+     * 移动文件
+     * @param fileName
+     * @param oldPath
+     * @param newPath
+     * @param request
+     * @return
+     */
+    InvokeResult fileMove(String fileName, String oldPath, String newPath, HttpServletRequest request);
+
+    /**
+     * 转码功能
+     * @param filepath
+     * @return
+     */
+    InvokeResult videoConvert(String filepath);
 }

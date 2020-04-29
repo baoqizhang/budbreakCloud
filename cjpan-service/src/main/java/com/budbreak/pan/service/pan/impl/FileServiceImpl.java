@@ -2,10 +2,14 @@ package com.budbreak.pan.service.pan.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.budbreak.pan.common.*;
+import com.budbreak.pan.entity.link.Secret;
 import com.budbreak.pan.model.FileMsg;
 import com.budbreak.pan.service.WebUtil;
+import com.budbreak.pan.service.link.SecretService;
 import com.budbreak.pan.service.pan.FileService;
+import com.budbreak.pan.vo.link.SecretVO;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,20 +33,24 @@ import static com.budbreak.pan.common.StringUtil.stringSlashToOne;
 @Transactional(rollbackFor = Exception.class)
 public class FileServiceImpl implements FileService {
 
+    @Autowired
+    private SecretService secretService;
+
     @Value("${fileRootPath}")
-    public  String fileRootPath;
+    public String fileRootPath;
 
     @Value("${tempPath}")
     public String tempPath;
 
     @Value("${size}")
-    public static int size;
+    public  int size;
 
     @Value("${secretLen}")
-    private static int secretLen;
+    private  int secretLen;
 
     @Value("${key}")
-    private static String key;
+    private  String key;
+
 
     @Override
     public InvokeResult getSpaceSize(HttpServletRequest request) {
@@ -66,7 +74,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<FileMsg> fileConvert(List<FileMsg> fileMsgList) {
 
-        List<FileMsg> fileMsgLists =fileMsgList;
+        List<FileMsg> fileMsgLists = fileMsgList;
         // 判断文件转码情况
         for (FileMsg fileMsg : fileMsgLists) {
             // 跳过文件夹
@@ -221,9 +229,9 @@ public class FileServiceImpl implements FileService {
         } catch (Exception e) {
             return InvokeResult.error();
         }
-        if (b){
+        if (b) {
             return InvokeResult.success("上传成功");
-        }else {
+        } else {
             return InvokeResult.failure("上传失败");
         }
     }
@@ -294,8 +302,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public InvokeResult uploadSevlet(HttpServletRequest request, MultipartFile file, String path) {
-        //        String fileMd5 = request.getParameter("fileMd5");
+    public void uploadServlet(HttpServletRequest request, MultipartFile file, String path) {
         String chunk = request.getParameter("chunk");
         String fileName = file.getOriginalFilename();
         String userName = WebUtil.getUserNameByRequest(request);
@@ -314,18 +321,16 @@ public class FileServiceImpl implements FileService {
                 try {
                     chunkFile.createNewFile();
                     item.transferTo(chunkFile);
-                } catch (IllegalStateException e) {
                 } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
-        return InvokeResult.success();
     }
 
     @Override
     public InvokeResult checkChunk(HttpServletRequest request) {
         String fileName = request.getParameter("fileName");
-        //        String fileMd5 = request.getParameter("fileMd5");
         String chunk = request.getParameter("chunk");
         String chunkSize = request.getParameter("chunkSize");
         String userName = WebUtil.getUserNameByRequest(request);
@@ -341,9 +346,9 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public InvokeResult mergeChunks(HttpServletRequest request, String path) {
+    public void mergeChunks(HttpServletRequest request, String path) {
         if (path == null) {
-            return InvokeResult.error();
+            return ;
         }
         String userName = WebUtil.getUserNameByRequest(request);
         String fileName = request.getParameter("fileName");
@@ -412,10 +417,6 @@ public class FileServiceImpl implements FileService {
         // 删除临时文件夹 根目录/temp/userName/fileName
         File tempFileDir = new File(tempPath + File.separator + userName + File.separator + fileName);
         FileUtil.deleteDir(tempFileDir);
-        if (b){
-            return InvokeResult.success();
-        }
-        return InvokeResult.error();
     }
 
     @Override
@@ -510,6 +511,157 @@ public class FileServiceImpl implements FileService {
         }
     }
 
+    @Override
+    public InvokeResult shareCallBack(String[] arr, String[] localLink) {
+        String userName = localLink[3];
+        //            String userName = arr[0];
+        String fileName = arr[arr.length - 1];
+        arr[arr.length - 1] = "";
+        //            String path = StringUtils.join(arr, "/");
+        String path = userName + "/";
+        if (localLink.length > 5) {
+            for (int k = 4; k < localLink.length - 1; k++) {
+                path = path + localLink[k] + "/";
+            }
+        }
+
+        // 服务器下载的文件所在的本地路径的文件夹
+        String saveFilePath = fileRootPath + "share" + "/" + path;
+        //            String saveFilePath = fileRootPath + "/" + path;
+        // 判断文件夹是否存在-建立文件夹
+        File filePathDir = new File(saveFilePath);
+        if (!filePathDir.exists()) {
+            // mkdirs递归创建父目录
+            boolean b = filePathDir.mkdirs();
+        }
+        saveFilePath = fileRootPath + "/" + path + "/" + fileName;
+        String link = saveFilePath.replace(fileRootPath, "/data/");
+        link = stringSlashToOne(link);
+        // 返回下载路径
+        return InvokeResult.success(link);
+}
+
+    @Override
+    public InvokeResult generateShareLink(String expireDay, String fileName, String path, HttpServletRequest request) {
+        String expireDayString = expireDay;
+        int expireDays = 3;
+        if (expireDayString != null) {
+            if (expireDayString.equals("永久有效")) {
+                expireDays = -1;
+            } else {
+                expireDays = Integer.parseInt(expireDayString);
+            }
+        }
+        if (path == null) {
+            path = "/";
+        }
+        if (fileName.isEmpty() || path.isEmpty()) {
+            return InvokeResult.failure("文件夹名为空！");
+        }
+        // 获取用户名
+        String userName = WebUtil.getUserNameByRequest(request);
+        String filePathAndName = userName + "/" + path + "/" + fileName;
+        filePathAndName = StringUtil.stringSlashToOne(filePathAndName);
+        String b = fileShareCodeEncode(filePathAndName);
+        String secret = "";
+        File file = new File(fileRootPath + "/" + filePathAndName);
+        String localLink = "/data/share/" + filePathAndName;
+        //存入数据库
+        SecretVO linkSecrets = secretService.selectLinkSecretByLocalLinkAndUserName(localLink, userName);
+        Secret linkSecret = new Secret();
+        if (linkSecrets == null) {
+            //设置提取密码
+            secret = PassWordCreate.createPassWord(secretLen);
+            linkSecret.setLocalLink(localLink);
+            linkSecret.setSecret(secret);
+            linkSecret.setUserName(userName);
+            linkSecret.setDownloadNum(0);
+            linkSecret.setFileName(fileName);
+
+            if (expireDays != -1) {
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, expireDays);
+                Date date = cal.getTime();
+                linkSecret.setExpireDate(date);
+            }
+
+            linkSecret.setSecretLink(b);
+            secretService.addEntity(linkSecret);
+        } else {
+            if (expireDays != -1) {
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, expireDays);
+                Date date = cal.getTime();
+                linkSecret.setId(linkSecrets.getId());
+                linkSecret.setExpireDate(date);
+                linkSecret.setShareDate(new Date());
+                // TODO 更新有问题
+                secretService.updateById(linkSecret);
+                secret = linkSecret.getSecret();
+            } else {
+                linkSecret.setId(linkSecrets.getId());
+                linkSecret.setExpireDate(null);
+                linkSecret.setShareDate(new Date());
+                secretService.updateById(linkSecret);
+                secret = linkSecret.getSecret();
+            }
+        }
+        if (SystemUtil.isWindows()) {
+            b = linkSecret.getSecretLink() + "##" + secret;
+        } else {
+            b = b + "##" + secret;
+        }
+        if (!"null".equals(b)) {
+            return InvokeResult.success(b);
+        } else {
+            return InvokeResult.failure("提取码生成失败");
+        }
+    }
+
+    @Override
+    public InvokeResult fileMove(String fileName, String oldPath, String newPath, HttpServletRequest request) {
+        if (fileName == null) {
+            fileName = "@dir@";
+        }
+        if (oldPath.isEmpty() || newPath.isEmpty()) {
+          return InvokeResult.failure("路径名为空！");
+        }
+        // 获取用户名
+        String userName = WebUtil.getUserNameByRequest(request);
+        // 移动-本地磁盘文件
+        String saveFilePath = fileRootPath + userName + "/";
+        String lfilename = ("@dir@".equals(fileName) ? "" : "/" + fileName);
+        String oldNameWithPath = stringSlashToOne(saveFilePath + oldPath + lfilename);
+        String tmpnewfilename = "@dir@".equals(fileName) ?
+                (String) StringUtil.getfilesuffix(oldNameWithPath, false, "/", false) : "";
+        String newNameWithPath = stringSlashToOne(saveFilePath + newPath + lfilename + tmpnewfilename);
+        boolean b = FileUtil.renameFile(oldNameWithPath, newNameWithPath);
+        if (b) {
+            return InvokeResult.success();
+        } else {
+            return InvokeResult.failure("移动失败");
+        }
+    }
+
+    @Override
+    public InvokeResult videoConvert(String filepath) {
+        if (filepath.isEmpty()) {
+            return InvokeResult.failure("源文件路径名字为空！");
+        }
+        String ffmepgpath = fileRootPath + "/ffmpeg/bin";
+        Map<String, Object> retmap = ConvertVideo.convertVideo(filepath, ffmepgpath);
+        String retstr = (String) retmap.get("flag");
+
+        // 成功true并有路径，失败false也有路径，转码中false并且没路径
+        if ("complete".equals(retstr)) {
+            return InvokeResult.success(retmap.get("path"));
+        } else if ("transcoding".equals(retstr)) {
+            // 这里转码中属于bug情况
+            return InvokeResult.success("");
+        }
+        return InvokeResult.error();
+    }
+
     public Boolean[] userFileDelete(String fileName, String userName, String path) {
         //解析fileName: 以$$符号分割
         String[] fileNames = null;
@@ -544,5 +696,16 @@ public class FileServiceImpl implements FileService {
 
         }
         return b;
+    }
+
+    public String fileShareCodeEncode(String filePathAndName) {
+        EncryptUtil des;
+        try {
+            des = new EncryptUtil(key, "utf-8");
+            return des.encode(filePathAndName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "null";
     }
 }

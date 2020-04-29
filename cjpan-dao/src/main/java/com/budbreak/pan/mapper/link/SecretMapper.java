@@ -35,4 +35,25 @@ public interface SecretMapper extends BaseMapper<Secret> {
     */
     IPage<SecretVO> selectOwnPage(Page page, @Param("param") Map<String, Object> param);
 
+    /**
+     * 通过加密连接查找
+     * @param link
+     * @return
+     */
+    SecretVO selectSecretBySecretLink(@Param("link") String link);
+
+    /**
+     * 增加下次次数
+     * @param downloadNum
+     * @param localLink
+     */
+    void updateDownloadNum(int downloadNum, String localLink);
+
+    /**
+     * 通过本地连接+用户名查找
+     * @param localLink
+     * @param userName
+     * @return
+     */
+    SecretVO selectLinkSecretByLocalLinkAndUserName(String localLink, String userName);
 }
