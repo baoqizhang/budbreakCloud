@@ -38,13 +38,10 @@ public class FileController {
     private FileService fileService;
 
     @Autowired
-    private FileManager fileManager;
-
-    @Autowired
     private SecretService secretService;
 
     @Value("${key}")
-    private static String key;
+    private  String key;
 
     @ApiOperation("文件上传")
     @PostMapping("upload")
@@ -121,9 +118,9 @@ public class FileController {
         return fileService.dirCreate(request, dirName, path);
     }
 
-    @GetMapping("shareCallBack/{link}")
     @ApiOperation("验证文件提取码是否正确")
-    public InvokeResult shareCallBack(@PathVariable String link) {
+    @PostMapping("shareCallBack")
+    public InvokeResult shareCallBack(String link) {
         if (link.isEmpty()) {
             return InvokeResult.failure("提取码为空！");
         }
@@ -223,8 +220,8 @@ public class FileController {
         return fileService.checkChunk(request);
     }
 
-    @ApiOperation("分块上传文件")
-    @RequestMapping(value = "/merge")
+    @ApiOperation("分块上传文件合并")
+    @PostMapping(value = "/merge")
     public void mergeChunks(HttpServletRequest request, String path){
         fileService.mergeChunks(request, path);
     }

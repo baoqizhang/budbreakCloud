@@ -254,14 +254,13 @@
             $("#userLName").css("display","none");
         }
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "/shareCallBack",
             data: {link: nowcode},
             dataType: "json",
             success: function (data) {
                 if (data.code == "200") {
                     var nowLink = data.data;
-                    alert(nowLink);
                     downloadurl = nowLink;
                     var name_list = nowLink.split("/");
                     var file_name = name_list[name_list.length - 1];
@@ -340,7 +339,7 @@
         // var nowcode =window.localStorage.getItem("filecode");
         var nowcode = $("#downloadLink").text();
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "/shareCallBack",
             data: {link: nowcode},
             dataType: "json",

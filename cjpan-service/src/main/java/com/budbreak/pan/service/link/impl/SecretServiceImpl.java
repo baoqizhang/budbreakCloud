@@ -52,4 +52,9 @@ public class SecretServiceImpl extends ServiceImpl<SecretMapper, Secret> impleme
         return secretMapper.selectLinkSecretByLocalLinkAndUserName(localLink, userName);
     }
 
+    @Override
+    public void updateSecret(Map map) {
+        secretMapper.updateSecret(map);
+    }
+
 }

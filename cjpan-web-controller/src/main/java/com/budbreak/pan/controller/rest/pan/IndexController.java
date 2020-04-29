@@ -50,7 +50,7 @@ public class IndexController {
     @GetMapping("/old")
     public ModelAndView admin(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if (cookies!=null) {
+        if (cookies != null) {
             List<Cookie> collect = Arrays.stream(cookies).filter(cookie -> cookie.getName()
                     .equals("x-auth-token"))
                     .collect(Collectors.toList());
@@ -73,7 +73,7 @@ public class IndexController {
     @GetMapping("/onlineplayer")
     public ModelAndView onlineplayer(HttpServletRequest request, String fileName, String filePath) {
         String userNameByRequest = WebUtil.getUserNameByRequest(request);
-        String userName = (userNameByRequest==null)?"null" : userNameByRequest;
+        String userName = (userNameByRequest == null) ? "null" : userNameByRequest;
         ModelAndView modelAndView = new ModelAndView("onlineplayer");
         modelAndView.addObject("author", userName);
         modelAndView.addObject("fileName", fileName);

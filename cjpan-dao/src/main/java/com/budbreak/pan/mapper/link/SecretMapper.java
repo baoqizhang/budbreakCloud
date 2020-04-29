@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Map;
 /**
  * @Description: 代码生成器自动生成
@@ -56,4 +55,10 @@ public interface SecretMapper extends BaseMapper<Secret> {
      * @return
      */
     SecretVO selectLinkSecretByLocalLinkAndUserName(String localLink, String userName);
+
+    /**
+     * 更新链接
+     * @param map
+     */
+    void updateSecret(@Param("map") Map map);
 }

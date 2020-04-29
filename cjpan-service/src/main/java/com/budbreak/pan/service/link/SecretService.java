@@ -3,10 +3,9 @@ package com.budbreak.pan.service.link;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.budbreak.pan.entity.link.Secret;
 import com.budbreak.pan.vo.link.SecretVO;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import java.util.List;
+import java.util.Map;
+
 /**
 * @Description: TODO
 * @author:
@@ -47,4 +46,10 @@ public interface SecretService extends IService<Secret> {
      * @param userName
      */
     SecretVO selectLinkSecretByLocalLinkAndUserName(String localLink, String userName);
+
+    /**
+     * 更新链接
+     * @param map
+     */
+    void updateSecret(Map map);
 }

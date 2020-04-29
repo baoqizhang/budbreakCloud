@@ -569,6 +569,8 @@ public class FileServiceImpl implements FileService {
         //存入数据库
         SecretVO linkSecrets = secretService.selectLinkSecretByLocalLinkAndUserName(localLink, userName);
         Secret linkSecret = new Secret();
+        Map map = new HashMap(4,1);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         if (linkSecrets == null) {
             //设置提取密码
             secret = PassWordCreate.createPassWord(secretLen);
@@ -577,7 +579,6 @@ public class FileServiceImpl implements FileService {
             linkSecret.setUserName(userName);
             linkSecret.setDownloadNum(0);
             linkSecret.setFileName(fileName);
-
             if (expireDays != -1) {
                 Calendar cal = Calendar.getInstance();
                 cal.add(Calendar.DATE, expireDays);
@@ -595,15 +596,16 @@ public class FileServiceImpl implements FileService {
                 linkSecret.setId(linkSecrets.getId());
                 linkSecret.setExpireDate(date);
                 linkSecret.setShareDate(new Date());
-                // TODO 更新有问题
+                linkSecret.setSecretLink(linkSecrets.getSecretLink());
                 secretService.updateById(linkSecret);
-                secret = linkSecret.getSecret();
+                secret = linkSecrets.getSecret();
             } else {
                 linkSecret.setId(linkSecrets.getId());
                 linkSecret.setExpireDate(null);
                 linkSecret.setShareDate(new Date());
+                linkSecret.setSecretLink(linkSecrets.getSecretLink());
                 secretService.updateById(linkSecret);
-                secret = linkSecret.getSecret();
+                secret = linkSecrets.getSecret();
             }
         }
         if (SystemUtil.isWindows()) {

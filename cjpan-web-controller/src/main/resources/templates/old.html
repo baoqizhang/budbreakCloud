@@ -344,7 +344,8 @@
     var tem;
     var username=$("#userLName").text();
     var create = 0;
-     //生成链接的响应函数
+
+     //生成分享链接的响应函数
     $('#createLink').click(function (e) {
         var expireDay_temp=$('input[name="rationExpireDay"]:checked').val();
         //去除空格
@@ -360,7 +361,7 @@
                     document.getElementById("shareLinkCopyCancel").style.display="block";
                     var rootLink = window.location.host;
                     if($("#outer_share").is(":checked")){
-                        rootLink = "cjpan.jfz.me";
+                        rootLink = "cjpan.budbreak.com";
                     }
                     var tgLink = "http://" + rootLink + "/sharefile?link=" + data.data;
                     var tgReLink = tgLink.split("##");
@@ -372,6 +373,7 @@
         });
     });
 
+    //ie内核判断
     $(function () {
         // 不支持ie浏览器
        if (isIE() == true) {
@@ -402,6 +404,7 @@
     // 文件夹标识
     var folder_label = "文件夹";
 
+    //退出登陆
     $('#quitBtn').click(function (e) {
         $.ajax({
             type: "GET",
@@ -417,6 +420,7 @@
         });
     });
 
+    //选择上传文件
     $('#pickerbtn').click(function () {
         $('#picker input[type="file"]').click();
     });
@@ -1061,6 +1065,7 @@
         refreshUserFileList();
     }
 
+    //创建目录
     $('#confirmDirBtn').on('click', function () {
         var newFolderName = $('#newDirText').val();
         if (newFolderName == "") return;
@@ -1188,7 +1193,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/userfilelist",
+            url: "/getFileList",
             data: {path: path_in},
             dataType: "json",
             success: function (data) {
@@ -1212,6 +1217,7 @@
         });
     }
 
+    //移动文件
     $('#setMoveBtn').click(function () {
         var oldpath = nowUserPath;
         var newpath = nowMovePath;
@@ -1584,8 +1590,8 @@
                                 dataType: "json",
                                 success: function (data) {
                                     $("#loading").hide();
-                                    if (data.success) {
-                                        allDownloadFile(data.msg, tempName);
+                                    if (data.code == "200") {
+                                        allDownloadFile(data.map.link, tempName);
                                     }
                                 }
                             });
@@ -1738,6 +1744,7 @@
         });}
     }
 
+    //一键音乐播放，随机选取存在的音乐
     function onekeymusic() {
         $.ajax({
             type: "POST",
