@@ -2,6 +2,7 @@ package com.budbreak.pan.controller.config.filter;
 
 
 import com.budbreak.pan.entity.pan.User;
+import com.budbreak.pan.service.WebUtil;
 import com.budbreak.pan.service.pan.shiro.JWTToken;
 import com.budbreak.pan.service.pan.shiro.JwtUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -22,6 +23,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -45,6 +47,7 @@ public class JwtAuthFilter extends AuthenticatingFilter {
         if (httpServletRequest.getMethod().equals(RequestMethod.OPTIONS.name())) {
             return false;
         }
+
         //TODO 是否考虑在此做用户认证(以省去JwtRealm),下方调用super.preHandle()会调用isAccessAllowed()方法执行subject.login()进行realm验证
         return super.preHandle(request, response);
     }
@@ -61,27 +64,35 @@ public class JwtAuthFilter extends AuthenticatingFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-
+        HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
         HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
         if(this.isLoginRequest(request, response)) {
-            return true;
-        }
-        Cookie[] cookies = httpServletRequest.getCookies();
-        String token = null;
-        if (cookies!=null) {
-            List<Cookie> collect = Arrays.stream(cookies).filter(cookie -> cookie.getName().equals("x-auth-token")).collect(Collectors.toList());
-             token = collect.get(0).getValue();
-        }
-        if (null != token && null != JwtUtils.getUsername(token)){
             return true;
         }
         Boolean afterFiltered = (Boolean)(request.getAttribute("jwtShiroFilter.FILTERED"));
         if( BooleanUtils.isTrue(afterFiltered)) {
             return true;
         }
-
+        Cookie[] cookies = httpServletRequest.getCookies();
+        String token = null;
+        if (cookies != null) {
+            List<Cookie> collect = Arrays.stream(cookies).filter(cookie -> cookie.getName().equals("x-auth-token")).collect(Collectors.toList());
+            if (collect.size() > 0) {
+                token = collect.get(0).getValue();
+            }
+        }
+        if (null != token && null != JwtUtils.getUsername(token)) {
+            return true;
+        }else {
+            try {
+                httpServletResponse.sendRedirect("/");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         boolean allowed = false;
         try {
+            // 在header取得的token用于后续jwtRealm验证
             allowed = executeLogin(request, response);
         } catch(IllegalStateException e){ //not found any token
             log.error("Not found any token");

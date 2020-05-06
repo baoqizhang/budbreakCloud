@@ -126,7 +126,7 @@ public class ShiroConfig {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
         chainDefinition.addPathDefinition("/", "noSessionCreation,anon");
         chainDefinition.addPathDefinition("api/v1/pan/user/register", "noSessionCreation,anon");
-        chainDefinition.addPathDefinition("api/v1/pan/user/quit", "noSessionCreation,anon");
+        chainDefinition.addPathDefinition("api/v1/pan/user/quit", "noSessionCreation,authcToken[permissive]");
         chainDefinition.addPathDefinition("/images/**", "anon");
         chainDefinition.addPathDefinition("/js/**", "anon");
         chainDefinition.addPathDefinition("/css/**", "anon");

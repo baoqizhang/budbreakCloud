@@ -42,16 +42,16 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         registry.addResourceHandler("/data/**").addResourceLocations("file:" + fileRootPath);
     }
 
-//    /**
-//     * 跳转页面
-//     *
-//     * @param registry 注册
-//     */
-//    @Override
-//    public void addViewControllers(ViewControllerRegistry registry) {
-//        registry.addViewController("/toLogin").setViewName("login");
-//    }
-//
+    /**
+     * 跳转页面
+     *
+     * @param registry 注册
+     */
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("login");
+    }
+
 //    /**
 //     * 拦截器
 //     *
