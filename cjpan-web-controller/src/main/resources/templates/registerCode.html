@@ -86,11 +86,11 @@
             },
             dataType: "json",
             success: function (data) {
-                if(data.success){
-                    console.log("验证码为："+data.msg);
+                if(data.code == "200"){
+                    console.log("验证码为："+data.data);
                     $("#shareRegisterCode").css("display","block");
                     $("#registerCodeCopy").css("display","block");
-                    $("#registerCode").text(data.msg);
+                    $("#registerCode").text(data.data);
 
                 }else{
                     alert(data.msg);

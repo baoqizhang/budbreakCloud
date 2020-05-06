@@ -18,7 +18,7 @@ public class WebUtil {
     public static String getUserNameByRequest(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         String token = null;
-        if (cookies != null) {
+        if (cookies.length > 0 ) {
             List<Cookie> collect = Arrays.stream(cookies).filter(cookie -> cookie.getName().equals("x-auth-token")).collect(Collectors.toList());
             token = collect.get(0).getValue();
         }

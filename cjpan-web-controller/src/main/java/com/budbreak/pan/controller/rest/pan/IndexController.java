@@ -4,6 +4,7 @@ import com.budbreak.pan.common.EncryptUtil;
 import com.budbreak.pan.service.WebUtil;
 import com.budbreak.pan.service.pan.shiro.JwtUtils;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,7 +55,10 @@ public class IndexController {
             List<Cookie> collect = Arrays.stream(cookies).filter(cookie -> cookie.getName()
                     .equals("x-auth-token"))
                     .collect(Collectors.toList());
-            String username = JwtUtils.getUsername(collect.get(0).getValue());
+            String username = "";
+            if (collect.size() >0) {
+                 username = JwtUtils.getUsername(collect.get(0).getValue());
+            }
             ModelAndView modelAndView = new ModelAndView("old");
             modelAndView.addObject("author", username);
             return modelAndView;

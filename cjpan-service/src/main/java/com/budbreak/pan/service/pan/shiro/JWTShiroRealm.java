@@ -15,6 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * 自定义身份认证
@@ -60,6 +63,15 @@ public class JWTShiroRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return new SimpleAuthorizationInfo();
+        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+        //没有做权限
+        UserVO user = (UserVO) principals.getPrimaryPrincipal();
+        String level = user.getLevel();
+        Set<String> permissionStrings = new HashSet<String>();
+        if (level != null){
+            permissionStrings.add(level);
+        }
+        simpleAuthorizationInfo.setStringPermissions(permissionStrings);
+        return simpleAuthorizationInfo;
     }
 }

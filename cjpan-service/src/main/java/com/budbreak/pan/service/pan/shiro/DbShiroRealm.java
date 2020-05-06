@@ -13,6 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class DbShiroRealm extends AuthorizingRealm {
 
     @Autowired
@@ -49,15 +53,13 @@ public class DbShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        //没有做权限
-//        User user = (User) principals.getPrimaryPrincipal();
-//        List<String> roles = user.getRoles();
-//        if(roles == null) {
-//            roles = userService.getUserRoles(user.getUserId());
-//            user.setRoles(roles);
-//        }
-//        if (roles != null)
-//            simpleAuthorizationInfo.addRoles(roles);
+        UserVO user = (UserVO) principals.getPrimaryPrincipal();
+        String level = user.getLevel();
+        Set<String> permissionStrings = new HashSet<String>();
+        if (level != null){
+            permissionStrings.add(level);
+        }
+        simpleAuthorizationInfo.setStringPermissions(permissionStrings);
 
         return simpleAuthorizationInfo;
     }
