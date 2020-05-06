@@ -5,6 +5,7 @@ import com.budbreak.pan.controller.assembler.link.SecretAssembler;
 import com.budbreak.pan.controller.command.link.SecretCreateCommand;
 import com.budbreak.pan.controller.command.link.SecretUpdateCommand;
 import com.budbreak.pan.entity.link.Secret;
+import com.budbreak.pan.service.pan.FileService;
 import com.budbreak.pan.vo.link.SecretVO;
 import com.budbreak.pan.service.link.SecretService;
 import com.budbreak.pan.manager.link.SecretManager;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,13 +36,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 public class SecretRest  {
 
     @Autowired
-    private SecretMapper secretMapper;
-
-    @Autowired
     private SecretService secretService;
 
     @Autowired
     private SecretManager secretManager;
+
+    @Autowired
+    private FileService fileService;
 
     @PostMapping("add")
     @ApiOperation(value = "add Secret")
@@ -82,5 +85,17 @@ public class SecretRest  {
         Map<String, Object> map = new HashMap<>(4);
 
         return secretManager.getPage(page, map);
+    }
+
+    @PostMapping("shareToMyPan")
+    @ApiOperation(value = "保存到网盘", notes = "link是加密的链接，downloadLink解密后的链接/data/share/zc2/Fuck.java,  path：保存路径--是用户名后面的路径")
+    public InvokeResult shareToMyPan(HttpServletRequest request, String path, String link) {
+        String downloadLink = "";
+        if (link.contains("/data/share")) {
+            downloadLink = link;
+        } else {
+            downloadLink = fileService.fileShareCodeDecode(link);
+        }
+        return secretService.shareToMyPan(request, path, downloadLink);
     }
 }

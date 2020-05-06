@@ -1,9 +1,11 @@
 package com.budbreak.pan.service.link;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.budbreak.pan.common.InvokeResult;
 import com.budbreak.pan.entity.link.Secret;
 import com.budbreak.pan.vo.link.SecretVO;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -52,4 +54,13 @@ public interface SecretService extends IService<Secret> {
      * @param map
      */
     void updateSecret(Map map);
+
+    /**
+     * 分享保存到网盘
+     * @param request
+     * @param path
+     * @param link
+     * @return
+     */
+    InvokeResult shareToMyPan(HttpServletRequest request, String path, String link);
 }

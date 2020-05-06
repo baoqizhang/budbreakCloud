@@ -146,4 +146,11 @@ public interface FileService {
      * @return
      */
     InvokeResult videoConvert(String filepath);
+
+    /**
+     * 分享保存到网盘
+     * @param link
+     * @return
+     */
+    String fileShareCodeDecode(String link);
 }

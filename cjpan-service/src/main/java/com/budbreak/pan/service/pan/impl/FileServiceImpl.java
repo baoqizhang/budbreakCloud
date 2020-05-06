@@ -664,6 +664,45 @@ public class FileServiceImpl implements FileService {
         return InvokeResult.error();
     }
 
+    @Override
+    public String fileShareCodeDecode(String code) {
+        EncryptUtil des;
+        try {
+            des = new EncryptUtil(key, "utf-8");
+            String filePathAndName = des.decode(code);
+            String[] arr = filePathAndName.split("/");
+            SecretVO linkSecret = secretService.selectSecretBySecretLink(code);
+            String[] localLink = linkSecret.getLocalLink().split("/");
+            String userName = localLink[3];
+            //            String userName = arr[0];
+            String fileName = arr[arr.length - 1];
+            arr[arr.length - 1] = "";
+            //            String path = StringUtils.join(arr, "/");
+            String path = userName + "/";
+            if (localLink.length > 5) {
+                for (int k = 4; k < localLink.length - 1; k++) {
+                    path = path + localLink[k] + "/";
+                }
+            }
+            // 服务器下载的文件所在的本地路径的文件夹
+            String saveFilePath = fileRootPath + "share" + "/" + path;
+            //            String saveFilePath = fileRootPath + "/" + path;
+            // 判断文件夹是否存在-建立文件夹
+            File filePathDir = new File(saveFilePath);
+            if (!filePathDir.exists()) {
+                // mkdirs递归创建父目录
+                boolean b = filePathDir.mkdirs();
+            }
+            saveFilePath = fileRootPath + "/" + path + "/" + fileName;
+            String link = saveFilePath.replace(fileRootPath, "/data/");
+            link = stringSlashToOne(link);
+            // 返回下载路径
+            return link;
+        } catch (Exception e) {
+            return "null";
+        }
+    }
+
     public Boolean[] userFileDelete(String fileName, String userName, String path) {
         //解析fileName: 以$$符号分割
         String[] fileNames = null;

@@ -184,7 +184,7 @@
     $("#doLogin").click(function (e) {
             $.ajax({
                 type: "POST",
-                url: "/login",
+                url: "api/v1/pan/user/login",
                 data: {
                     "userName": $("#userName").val(),
                     "password": $("#password").val()
@@ -197,7 +197,6 @@
                         $("#closeLogin").click();
                         $("#userLName").css("display","block");
                         $("#userLName").text("您好，" + data.userName);
-                        alert("登录成功！");
                         $("#loginBtn").css("display","none");
                     } else if (data.code == "500") {
                         alert("密码错误！");
@@ -286,18 +285,17 @@
         var nowcode = $("#downloadLink").text();
         $.ajax({
             type: "POST",
-            url: "/shareToMyPan",
+            url: "api/v1/link/secret/shareToMyPan",
             data: {link: nowcode},
             dataType: "json",
             success: function (data) {
-                if(data.msg=="未登录"){
-                    //未登录
+                if(data.code == "200"){
                     alert(data.msg);
-//                    window.location.href = '/';
-                    $("#loginBtn").click();
+                   window.location.href = '/old';
                     //这做一个模态框类似的登录接口，还是留在当前界面
                 }else{
                     alert(data.msg);
+                    $("#loginBtn").click();
                 }
             }
         });
