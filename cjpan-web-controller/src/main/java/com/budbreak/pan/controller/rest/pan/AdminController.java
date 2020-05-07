@@ -1,8 +1,8 @@
 package com.budbreak.pan.controller.rest.pan;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.additional.update.impl.LambdaUpdateChainWrapper;
 import com.budbreak.pan.common.InvokeResult;
 import com.budbreak.pan.common.PageResult;
 import com.budbreak.pan.common.PassWordCreate;
@@ -10,6 +10,7 @@ import com.budbreak.pan.entity.pan.User;
 import com.budbreak.pan.entity.verify.Code;
 import com.budbreak.pan.manager.pan.UserManager;
 import com.budbreak.pan.mapper.pan.UserMapper;
+import com.budbreak.pan.mapper.verify.CodeMapper;
 import com.budbreak.pan.service.WebUtil;
 import com.budbreak.pan.service.pan.UserService;
 import com.budbreak.pan.service.verify.CodeService;
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -44,20 +46,20 @@ public class AdminController {
     private CodeService iVerifyCodeService;
 
     @Autowired
+    private CodeMapper codeMapper;
+
+    @Autowired
     private UserMapper userMapper;
 
     @Autowired
     private UserManager userManager;
 
-    /**
-     * 用户修改密码的接口，可以直接访问
-     *
-     * @param userName userName
-     * @param password password
-     */
-    @RequestMapping("/alterPassword")
-    public void alterSecret(@RequestParam String userName, @RequestParam String password) {
-//        userService.alterPassword(userName, password);
+
+    @PutMapping("/alterPassword")
+    @ApiOperation("重置密码")
+    @RequiresPermissions("1")
+    public InvokeResult alterSecret(@RequestParam("id") Integer id) {
+        return userService.alterPassword(id);
     }
 
     /**
@@ -66,8 +68,9 @@ public class AdminController {
     @DeleteMapping("/deleteUser")
     @ApiOperation("根据用户id删除用户")
     @RequiresPermissions("1")
-    public void deleteUser(@RequestParam Integer id) {
+    public InvokeResult deleteUser(@RequestParam Integer id) {
         userMapper.deleteById(id);
+        return InvokeResult.success();
     }
 
     /**
@@ -88,11 +91,16 @@ public class AdminController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "proRegisterCode", produces = "application/json; charset=utf-8")
+    @PostMapping(value = "proRegisterCode", produces = "application/json; charset=utf-8")
     @RequiresPermissions("1")
     public InvokeResult proRegisterCode(@RequestParam String customName, HttpServletRequest request) {
-        if (customName == null && customName == "") {
+        if (customName == null && customName.equals("")) {
             return InvokeResult.failure("用户名不能为空！");
+        }
+        //查询该用户名是否存在，若存在提示已存在
+        List<Code> codes = codeMapper.selectList(new LambdaQueryWrapper<Code>().eq(Code::getCustomName, customName));
+        if (codes.size() > 0){
+            return InvokeResult.failure("该用户已存在注册码");
         }
         String registerCode = PassWordCreate.createPassWord(6);
         Code verifyCode = new Code();
@@ -111,6 +119,7 @@ public class AdminController {
 
     @GetMapping("getUserList")
     @ApiOperation(value = "获取用户列表")
+    @RequiresPermissions("1")
     public IPage<UserVO> page(
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "10") Integer pageSize,
@@ -123,7 +132,8 @@ public class AdminController {
 
     @PutMapping("updateAuth")
     @ApiOperation("修改用户权限")
-    public InvokeResult updateAuth(@RequestParam("用户id") Integer id){
+    @RequiresPermissions("1")
+    public InvokeResult updateAuth(@RequestParam("id") Integer id){
         userMapper.update(null, new LambdaUpdateWrapper<User>()
                 .eq(User::getId, id)
                 .set(User::getLevel, "1"));

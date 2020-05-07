@@ -3,6 +3,7 @@ package com.budbreak.pan.service.pan.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.extra.mail.MailAccount;
 import cn.hutool.extra.mail.MailUtil;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.budbreak.pan.common.*;
 import com.budbreak.pan.entity.pan.User;
@@ -122,6 +123,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         CookieUtils.removeCookie("x-auth-token");
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
+        return InvokeResult.success();
+    }
+
+    @Override
+    public InvokeResult alterPassword(Integer id) {
+        String passWord = PassWordCreate.createPassWord(12);
+        User user =new User();
+        user.setPassword(passWord);
+        PasswordHelper.encryptPassword(user);
+        userMapper.update(null, new LambdaUpdateWrapper<User>()
+                .eq(User::getId, id)
+                .set(User::getPassword, user.getPassword())
+                .set(User::getAlias, user.getAlias()));
+        UserVO userVO = userMapper.selectDetailById(id);
+        //注册成功发送邮件
+        MailUtil.send(userVO.getEmail(),
+                "云网盘重置通知",
+                "<p>尊敬的用户" + userVO.getUsername() + ",恭喜您密码重置成功! 您的密码为:<a>"+ passWord +"</a></p>",
+                true);
         return InvokeResult.success();
     }
 

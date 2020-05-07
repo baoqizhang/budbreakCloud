@@ -65,4 +65,11 @@ public interface UserService extends IService<User> {
      * @param response
      */
     InvokeResult loginOut(HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * 重置密码，重置密码发送至用户邮箱
+     * @param id
+     * @return
+     */
+    InvokeResult alterPassword(Integer id);
 }

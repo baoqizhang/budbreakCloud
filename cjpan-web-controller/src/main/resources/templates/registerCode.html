@@ -42,10 +42,7 @@
                     <li role="presentation"><a id="userLName" href="/" th:text="${author}"
                                                style="color: firebrick;background: unset;"></a></li>
                     <!-- Button trigger modal -->
-                    <button type="button" id="loginBtn" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                     登录
-                    </button>
-                    <li id="homeBtn" role="presentation"><a href="/">主页</a></li>
+                    <li id="homeBtn" role="presentation"><a href="/old">主页</a></li>
                     <!--<li id="contactBtn" role="presentation"><a data-toggle="modal" data-target="#donateDlg">捐助</a></li>-->
                     <li id="quitBtn" role="presentation"><a style="cursor: pointer">退出</a></li>
                 </ul>
@@ -104,6 +101,21 @@
         }
     });
 
+    //退出登陆
+    $('#quitBtn').click(function (e) {
+        $.ajax({
+            type: "GET",
+            url: "api/v1/pan/user/quit",
+            dataType: "json",
+            success: function (data) {
+                if (data.code == "200") {
+                    window.location.href = "/";
+                }else {
+                    alert("登出失败！");
+                }
+            }
+        });
+    });
 </script>
 
 

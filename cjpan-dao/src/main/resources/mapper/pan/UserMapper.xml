@@ -28,13 +28,14 @@
 
     <select id="selectOwnPage" resultMap="userResultMap" parameterType="java.util.Map">
         SELECT
-            *
+        fd_username,fd_email,fd_phone,fd_createDate,fd_id
         FROM pan_user
         <where>
             <if test="param.searchWord != null and param.searchWord !='' ">
-                AND fd_name= #{param.searchWord}
+                AND fd_username LIKE CONCAT('%', #{param.searchWord}, '%')
             </if>
             AND fd_deleted = false
+            AND fd_level = "0"
         </where>
         ORDER BY fd_createDate DESC
     </select>
