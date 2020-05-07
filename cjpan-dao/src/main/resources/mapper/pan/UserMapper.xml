@@ -32,7 +32,7 @@
         FROM pan_user
         <where>
             <if test="param.searchWord != null and param.searchWord !='' ">
-                AND fd_id= #{param.searchWord}
+                AND fd_name= #{param.searchWord}
             </if>
             AND fd_deleted = false
         </where>

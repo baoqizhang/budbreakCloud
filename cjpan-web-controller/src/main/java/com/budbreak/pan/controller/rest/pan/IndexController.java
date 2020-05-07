@@ -1,10 +1,12 @@
 package com.budbreak.pan.controller.rest.pan;
 
 import com.budbreak.pan.common.EncryptUtil;
+import com.budbreak.pan.mapper.pan.UserMapper;
 import com.budbreak.pan.service.WebUtil;
 import com.budbreak.pan.service.pan.shiro.JwtUtils;
+import com.budbreak.pan.vo.pan.UserVO;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,9 @@ public class IndexController {
 
     @Value("${key}")
     private String key;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @ApiOperation("定位到分享页面")
     @RequestMapping("/share")
@@ -56,12 +61,22 @@ public class IndexController {
                     .equals("x-auth-token"))
                     .collect(Collectors.toList());
             String username = "";
-            if (collect.size() >0) {
-                 username = JwtUtils.getUsername(collect.get(0).getValue());
+            if (collect.size() > 0) {
+                username = JwtUtils.getUsername(collect.get(0).getValue());
             }
-            ModelAndView modelAndView = new ModelAndView("old");
-            modelAndView.addObject("author", username);
-            return modelAndView;
+            UserVO userVO = userMapper.selectUserByUserName(username);
+            if (userVO != null && userVO.getLevel().equals("0")) {
+                ModelAndView modelAndView = new ModelAndView("old");
+                modelAndView.addObject("author", username);
+                return modelAndView;
+            } else if (userVO != null && userVO.getLevel().equals("1")){
+                ModelAndView modelAndView = new ModelAndView("manager");
+                modelAndView.addObject("author", username);
+                return modelAndView;
+            }else {
+                ModelAndView modelAndView = new ModelAndView("errorPage");
+                return modelAndView;
+            }
         }
         return null;
     }
@@ -72,6 +87,14 @@ public class IndexController {
         ModelAndView modelAndView = new ModelAndView("login");
         return modelAndView;
     }
+
+//    @ApiOperation("定位到管理页面")
+//    @GetMapping("/manager")
+////    @RequiresPermissions("1")
+//    public ModelAndView manager() {
+//        ModelAndView modelAndView = new ModelAndView("manager");
+//        return modelAndView;
+//    }
 
     @ApiOperation("定位到播放页面")
     @GetMapping("/onlineplayer")
