@@ -16,6 +16,8 @@
     <script src="/aplayer/APlayer.min.js"></script>
 
     <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.media.js"></script>
     <!--<script src="/js/jquery.zclip.js"></script>-->
     <script src="/bootstrap/js/bootstrap.min.js"></script>
     <!--<script src="/bootstrap/bootstrap-table/bootstrap-table.js"></script>-->
@@ -226,7 +228,23 @@
             </div>
         </div>
     </div>
-
+    <!-- Modal pdf预览-->
+    <div class="modal fade" id="pdfviewDlg" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">PDF 预览</h4>
+                </div>
+                <div class="panel-body" style="text-align: center;">
+                    <a class="media" id="pdfview" href="pdf1.pdf"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--    <div class="panel-body fade">-->
+<!--        <a class="media" id="pdfview" href="pdf1.pdf"></a>-->
+<!--    </div>-->
     <!-- Modal 建立新文件夹-->
     <div class="modal fade" id="createDirDlg" role="dialog">
         <div class="modal-dialog modal-lg" style="width:60%;">
@@ -587,6 +605,9 @@
         uploader.upload();
     });
 
+    function  pdfView() {
+        $('a.media').media({width:850, height:525});
+    }
     // 刷新文件列表
     function refreshUserFileList() {
         var cell_start = 1;
@@ -820,6 +841,11 @@
                             {
                                 document.getElementById("imgview").src=downloadlist[tempIdx - 1];
                                 $('#imgviewDlg').modal('show');
+                            }else if(fileType.indexOf("pdf") != -1)
+                            {
+                                document.getElementById("pdfview").href=downloadlist[tempIdx - 1];
+                                pdfView();
+                                $('#pdfviewDlg').modal('show');
                             }
                             else oTabNow.rows[tempIdx].getElementsByTagName('a')[3].onclick();
                         }
@@ -1457,6 +1483,11 @@
                             {
                                 document.getElementById("imgview").src=downloadlist[tempIdx - 1];
                                 $('#imgviewDlg').modal('show');
+                            }else if(fileType.indexOf("pdf") != -1)
+                            {
+                                document.getElementById("pdfview").href=downloadlist[tempIdx - 1];
+                                $('#pdfviewDlg').modal('show');
+                                pdfView();
                             }
                             else oTabNow.rows[tempIdx].getElementsByTagName('a')[3].onclick();
                         }
