@@ -1,15 +1,15 @@
 package com.budbreak.pan.service.pan.impl;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.extra.mail.MailAccount;
 import cn.hutool.extra.mail.MailUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.budbreak.pan.common.*;
+import com.budbreak.pan.common.CookieUtils;
+import com.budbreak.pan.common.InvokeResult;
+import com.budbreak.pan.common.PassWordCreate;
+import com.budbreak.pan.common.PasswordHelper;
 import com.budbreak.pan.entity.pan.User;
 import com.budbreak.pan.mapper.pan.UserMapper;
 import com.budbreak.pan.mapper.verify.CodeMapper;
-import com.budbreak.pan.service.WebUtil;
 import com.budbreak.pan.service.pan.UserService;
 import com.budbreak.pan.service.pan.shiro.JwtUtils;
 import com.budbreak.pan.vo.pan.UserVO;
@@ -23,15 +23,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.budbreak.pan.common.SystemUtil.isWindows;
 
 /**
  * @Description: TODO
@@ -114,10 +107,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public InvokeResult loginOut(HttpServletRequest request, HttpServletResponse response) {
-        if (!isWindows()) {
-            // 非windows环境下要删除用户文件
-            FileUtil.deleteDir(fileRootPath + WebUtil.getUserNameByRequest(request));
-        }
+//        if (!isWindows()) {
+//            // 非windows环境下要删除用户文件
+//            FileUtil.deleteDir(fileRootPath + WebUtil.getUserNameByRequest(request));
+//        }
         // 清除cookie
         CookieUtils.removeCookie("token");
         CookieUtils.removeCookie("x-auth-token");
@@ -139,7 +132,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         UserVO userVO = userMapper.selectDetailById(id);
         //注册成功发送邮件
         MailUtil.send(userVO.getEmail(),
-                "云网盘重置通知",
+                "云网盘密码重置通知",
                 "<p>尊敬的用户" + userVO.getUsername() + ",恭喜您密码重置成功! 您的密码为:<a>"+ passWord +"</a></p>",
                 true);
         return InvokeResult.success();
