@@ -189,7 +189,8 @@ public class FileServiceImpl implements FileService {
         // 获取用户名
         String userName = WebUtil.getUserNameByRequest(request);
         if (!SystemUtil.isWindows()) {
-            path = "/pan/" + userName + path;
+//            path = "/pan/" + userName + path;
+            path = fileRootPath + userName + path;
         } else {
             path = fileRootPath + userName + path;
         }
