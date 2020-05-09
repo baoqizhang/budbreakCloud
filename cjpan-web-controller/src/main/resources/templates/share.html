@@ -358,7 +358,7 @@
     $('#quitBtn').click(function (e) {
         $.ajax({
             type: "GET",
-            url: "/quit",
+            url: "api/v1/pan/user/quit",
             dataType: "text",
             success: function (data) {
                 window.location.href = "/";

@@ -48,6 +48,9 @@ public class IndexController {
         modelAndView.addObject("link", link);
         modelAndView.addObject("linkDecoder", linkDecoder);
         String userName = WebUtil.getUserNameByRequest(request);
+        if (userName == null){
+            userName = "游客";
+        }
         modelAndView.addObject("author", userName);
         return modelAndView;
     }
