@@ -197,7 +197,7 @@ public class FileServiceImpl implements FileService {
         // 重命名文件
         File file = new File(path + "/" + dirName);
         if (!file.mkdir()) {
-            return InvokeResult.failure("文件夹创建失败");
+            return InvokeResult.failure("文件夹名已存在，创建失败！");
         }
         return InvokeResult.success();
     }

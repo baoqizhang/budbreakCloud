@@ -77,7 +77,7 @@ public class IndexController {
                 modelAndView.addObject("author", username);
                 return modelAndView;
             }else {
-                ModelAndView modelAndView = new ModelAndView("errorPage");
+                ModelAndView modelAndView = new ModelAndView("login");
                 return modelAndView;
             }
         }
