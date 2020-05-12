@@ -50,7 +50,7 @@ public final class CookieUtils {
 			//String v = URLEncoder.encode(new Gson().toJson(object), "UTF-8");
 
 			Cookie cookie = new Cookie(name, v);
-			cookie.setDomain("localhost");
+			cookie.setDomain("47.100.197.51");
 			cookie.setMaxAge(3600);
 			cookie.setPath("/");
 			saveCookie(cookie);

@@ -83,7 +83,7 @@
 			</div>
 			<div class="modal-body" style="text-align: center;">
 				<img src="/images/money.jpg" style="max-height: 350px;display: inline-block">
-<!--				<img src="/images/jfz_code.jpg" style="max-height: 350px;display: inline-block">-->
+				<!--				<img src="/images/jfz_code.jpg" style="max-height: 350px;display: inline-block">-->
 			</div>
 		</div>
 	</div>
@@ -123,7 +123,7 @@
 <div id="formbackground" class="carousel slide carousel-fade" style="position:fixed; z-index:-1;width: 100%;height:100%;" data-ride="carousel" data-interval="4000">
 	<div class="carousel-inner" role="listbox">
 		<div class="item active">
-			<img id="pic001" src="images/bg1.jpg" style="width: 100%;height: 100%;" alt="First slide">
+			<img id="pic001" src="images/bg3.jpg" style="width: 100%;height: 100%;" alt="First slide">
 			<p class="little_title">
 				<span>遇见好时光</span><br>
 				&nbsp;&nbsp;&nbsp;<span>花云云盘V3.0.1全功能定制版</span>
@@ -137,7 +137,7 @@
 			</p>
 		</div>
 		<div class="item">
-			<img id="pic003" src="images/bg3.jpg" style="width: 100%;height: 100%;" alt="Third slide">
+			<img id="pic003" src="images/bg1.jpg" style="width: 100%;height: 100%;" alt="Third slide">
 			<p class="little_title">
 				<span>全功能分享</span><br>
 				&nbsp;&nbsp;&nbsp;<span>随时随地 随传随到</span>
@@ -181,13 +181,18 @@
 							<input id="email" type="text" name="email" placeholder="邮箱地址" tabindex="1" autofocus="autofocus" class="form-control input-medium" />
 						</div>
 					</div>
+					<div class="controls" id="captchaGroup" style="margin-bottom: 60px;display: none;">
+						<label for="activeCode" class="glyphicon glyphicon-envelope"></label>
+						<input id="captcha" type="text" name="captcha" placeholder="验证码" tabindex="1" autofocus="autofocus" class="form-control input-medium" style="width: 55%;float:left"/>
+						<button type="button" id="captchabtn" tabindex="1" class="btn btn-primary" style="float: right">获取验证码</button>
+					</div>
 					<div class="control-group" id="phoneGroup" style="display: none;">
 						<div class="controls">
-							<label for="phone" class="glyphicon glyphicon-phone"></label>
+							<label for="phone" tabindex="1"  class="glyphicon glyphicon-phone"></label>
 							<input id="phone" type="text" name="phone" placeholder="电话号码" tabindex="1" autofocus="autofocus" class="form-control input-medium" />
 						</div>
 					</div>
-					<div class="control-group">
+					<div class="control-group" id="passwordGroup">
 						<div class="controls">
 							<label for="password" class="glyphicon glyphicon-briefcase"></label>
 							<input id="password" type="password" name="password" placeholder="密码" tabindex="2" class="form-control input-medium" />
@@ -210,6 +215,7 @@
 		</div>
 	</div>
 	<script>
+
 		$(function() {
 			// 禁用登录按钮
 			document.getElementById("doLogin").disabled=true;
@@ -219,7 +225,19 @@
 				$('#owl-login').removeClass('password');
 			});
 			$("#forget_pw").click(function (e) {
-				alert("密码忘了就没救了！")
+				$("#userName").attr('placeholder',"请输入用户名");
+				$("#email").attr('placeholder',"请输入邮箱");
+				$("#captcha").attr('placeholder',"请输入验证码");
+				$("#password").attr('placeholder',"请输入密码");
+				document.getElementById("doLogin").innerText="重置密码";
+				document.getElementById("doSignup").innerText="取消";
+				if($("#userName").val() != "" && $("#password").val() != ""&& $("#email").val() != ""&& $("#captcha").val() != ""){
+					document.getElementById("doLogin").disabled=false;
+				} else{
+					document.getElementById("doLogin").disabled=true;
+				}
+				$("#captchaGroup").show();
+				$("#emailGroup").show();
 			});
 			// 注册功能
 			$("#doSignup").click(function (e) {
@@ -228,7 +246,7 @@
 					$("#password").attr('placeholder',"请设置密码");
 					$("#email").attr('placeholder',"请设置邮箱");
 					$("#phone").attr('placeholder',"请设置电话号码");
-					document.getElementById("doLogin").innerText="确认";
+					document.getElementById("doLogin").innerText="注册";
 					document.getElementById("doSignup").innerText="取消注册";
 					if($("#userName").val() != "" && $("#password").val() != ""&& $("#email").val() != ""&& $("#phone").val() != ""){
 						document.getElementById("doLogin").disabled=false;
@@ -238,7 +256,7 @@
 					$("#activeCodeGroup").show();
 					$("#emailGroup").show();
 					$("#phoneGroup").show();
-
+					$("#captchaGroup").hide();
 				} else{
 					$("#userName").attr('placeholder',"用户名/手机号码");
 					$("#password").attr('placeholder',"密码");
@@ -252,6 +270,7 @@
 					$("#activeCodeGroup").hide();
 					$("#emailGroup").hide();
 					$("#phoneGroup").hide();
+					$("#captchaGroup").hide();
 				}
 			});
 
@@ -261,6 +280,30 @@
 				} else{
 					document.getElementById("doLogin").disabled=true;
 				}
+			});
+
+			//发送验证码
+			$("#captchabtn").click(function (e) {
+				if ($("#email").val() ==""){
+					alert("请输入邮箱！");
+					return;
+				}
+				$.ajax({
+					type: "GET",
+					url: "api/v1/pan/user/sendEmail",
+					data: {
+						userName: $("#userName").val(),
+						email: $("#email").val()
+					},
+					dataType: "json",
+					success: function (data) {
+						if (data.code == "200") {
+							alert("发送成功！");
+						} else {
+							alert(data.msg);
+						}
+					}
+				});
 			});
 			//简单登录操作
 			$("#doLogin").click(function (e) {
@@ -283,7 +326,7 @@
 							}
 						}
 					});
-				} else {
+				} else if (document.getElementById("doLogin").innerText=="注册"){
 					if ($("#activeCode").val() == "") {
 						alert("请填写激活码！");
 						return;
@@ -303,6 +346,31 @@
 						success: function (data) {
 							if (data.code == "200") {
 								alert("注册成功，请重新登录！");
+								window.location.href = '/';
+							} else {
+								alert(data.msg);
+							}
+						}
+					});
+				}else {
+					if ($("#captcha").val() == "") {
+						alert("请填写注册码！");
+						return;
+					}
+					$.ajax({
+						type: "PUT",
+						contentType: "application/json;charset=UTF-8",
+						url: "api/v1/pan/user/forget",
+						data: JSON.stringify({
+							"username": $("#userName").val(),
+							"password": $("#password").val(),
+							"email": $("#email").val(),
+							"captcha": $("#captcha").val()
+						}),
+						dataType: "json",
+						success: function (data) {
+							if (data.code == "200") {
+								alert("密码重置成功！");
 								window.location.href = '/';
 							} else {
 								alert(data.msg);

@@ -4,13 +4,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.budbreak.pan.common.InvokeResult;
 import com.budbreak.pan.entity.pan.User;
 import com.budbreak.pan.vo.pan.UserVO;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
 
 /**
 * @Description: TODO
@@ -29,9 +25,10 @@ public interface UserService extends IService<User> {
 
      /**
      * updateEntity
-     * @param entity
-     */
-    void updateEntity(User entity);
+      * @param entity
+      * @param request
+      */
+    InvokeResult updateEntity(User entity, HttpServletRequest request);
 
     /**
      * 登陆操作
@@ -72,4 +69,19 @@ public interface UserService extends IService<User> {
      * @return
      */
     InvokeResult alterPassword(Integer id);
+
+    /**
+     * 发送修改密码邮件验证码
+     * @param email
+     * @param userName
+     * @return
+     */
+    InvokeResult sendEmail(String email, String userName);
+
+    /**
+     * 重置密码
+     * @param captcha
+     * @return
+     */
+    InvokeResult forget(User user, String captcha);
 }

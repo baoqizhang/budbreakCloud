@@ -1,34 +1,23 @@
 package com.budbreak.pan.controller.rest.pan;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.budbreak.pan.common.CommonDTO;
 import com.budbreak.pan.common.InvokeResult;
-import com.budbreak.pan.common.PageResult;
 import com.budbreak.pan.controller.assembler.pan.UserAssembler;
 import com.budbreak.pan.controller.command.pan.UserCreateCommand;
 import com.budbreak.pan.controller.command.pan.UserUpdateCommand;
 import com.budbreak.pan.entity.pan.User;
 import com.budbreak.pan.manager.pan.UserManager;
-import com.budbreak.pan.mapper.pan.UserMapper;
 import com.budbreak.pan.service.pan.UserService;
 import com.budbreak.pan.vo.pan.UserVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.budbreak.pan.common.SystemUtil.isWindows;
 
 /**
  * @Description: 代码生成器自动生成
@@ -69,17 +58,16 @@ public class UserRest {
     }
 
     @ApiOperation("忘记密码验证码发送邮件")
-    @GetMapping("sendEmail/{email}")
-    public InvokeResult sendEmail(@PathVariable String email){
-        // TODO 发送邮箱验证码并保存到redis，用于重置密码验证
-        return InvokeResult.success();
+    @GetMapping("sendEmail")
+    public InvokeResult sendEmail(String email,String userName){
+        return userService.sendEmail(email, userName);
     }
 
     @ApiOperation("忘记密码")
-    @PostMapping("forget")
-    public InvokeResult forget(){
-        // TODO 查询输入用户的redis验证码是否正确，进行修改密码
-        return InvokeResult.success();
+    @PutMapping("forget")
+    public InvokeResult forget(@RequestBody UserUpdateCommand command){
+        User user = UserAssembler.toUser(command);
+        return userService.forget(user,command.getCaptcha());
     }
 
     @DeleteMapping("delete")
@@ -89,12 +77,11 @@ public class UserRest {
         return InvokeResult.success();
     }
 
-    @PutMapping("update")
-    @ApiOperation(value = "update User by id")
-    public InvokeResult update(@RequestBody @Valid UserUpdateCommand command) {
+    @PutMapping("updatePwd")
+    @ApiOperation(value = "修改密码")
+    public InvokeResult update(@RequestBody @Valid UserUpdateCommand command, HttpServletRequest request) {
         User entity = UserAssembler.toUser(command);
-        userService.updateEntity(entity);
-        return InvokeResult.success();
+        return userService.updateEntity(entity,request);
     }
 
     @GetMapping("detail")

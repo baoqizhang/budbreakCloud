@@ -4,8 +4,6 @@ import com.budbreak.pan.common.EncryptUtil;
 import com.budbreak.pan.common.FfmpegUtil;
 import com.budbreak.pan.common.FileUtil;
 import com.budbreak.pan.common.InvokeResult;
-import com.budbreak.pan.entity.link.Secret;
-import com.budbreak.pan.manager.pan.FileManager;
 import com.budbreak.pan.model.FileMsg;
 import com.budbreak.pan.service.link.SecretService;
 import com.budbreak.pan.service.pan.FileService;

@@ -175,6 +175,8 @@ public class ShiroConfig {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
         chainDefinition.addPathDefinition("/api/v1/pan/user/login", "noSessionCreation,anon");
         chainDefinition.addPathDefinition("/", "noSessionCreation,anon");
+        chainDefinition.addPathDefinition("/api/v1/pan/user/sendEmail", "noSessionCreation,anon");
+        chainDefinition.addPathDefinition("/api/v1/pan/user/forget", "noSessionCreation,anon");
         chainDefinition.addPathDefinition("/shareCallBack", "noSessionCreation,anon");
         chainDefinition.addPathDefinition("/sharefile", "noSessionCreation,anon");
         chainDefinition.addPathDefinition("/sharefileSecret", "noSessionCreation,anon");
