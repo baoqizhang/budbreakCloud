@@ -182,7 +182,7 @@
 						</div>
 					</div>
 					<div class="controls" id="captchaGroup" style="margin-bottom: 60px;display: none;">
-						<label for="activeCode" class="glyphicon glyphicon-envelope"></label>
+						<label for="activeCode" class="glyphicon glyphicon-fire"></label>
 						<input id="captcha" type="text" name="captcha" placeholder="验证码" tabindex="1" autofocus="autofocus" class="form-control input-medium" style="width: 55%;float:left"/>
 						<button type="button" id="captchabtn" tabindex="1" class="btn btn-primary" style="float: right">获取验证码</button>
 					</div>
@@ -346,7 +346,7 @@
 						success: function (data) {
 							if (data.code == "200") {
 								alert("注册成功，请重新登录！");
-								window.location.href = '/';
+								window.location.href = '/old';
 							} else {
 								alert(data.msg);
 							}
@@ -371,7 +371,7 @@
 						success: function (data) {
 							if (data.code == "200") {
 								alert("密码重置成功！");
-								window.location.href = '/';
+								window.location.href = '/old';
 							} else {
 								alert(data.msg);
 							}

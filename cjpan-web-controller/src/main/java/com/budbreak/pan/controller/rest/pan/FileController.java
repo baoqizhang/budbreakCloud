@@ -195,7 +195,7 @@ public class FileController {
             secretService.addOneToDownloadNum(linkSecret);
             return InvokeResult.success(link);
         } else {
-            return InvokeResult.failure("密码不正确！");
+            return InvokeResult.failure("提取码不正确！");
         }
     }
 

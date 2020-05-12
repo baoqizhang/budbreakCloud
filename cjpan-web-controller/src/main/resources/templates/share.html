@@ -33,7 +33,7 @@
         }
 
         /*.btn {*/
-            /*padding: 6px 30px;*/
+        /*padding: 6px 30px;*/
         /*}*/
 
         .blur {
@@ -139,7 +139,7 @@
                                                style="color: firebrick;background: unset;"></a></li>
                     <!-- Button trigger modal -->
                     <!--<button type="button" id="loginBtn" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">-->
-                     <!--登录-->
+                    <!--登录-->
                     <!--</button>-->
                     <li id="loginBtn" data-toggle="modal"  data-target="#exampleModal" role="presentation"><a style="cursor: pointer">登录</a></li>
                     <li id="homeBtn" role="presentation"><a href="/old">主页</a></li>
@@ -149,24 +149,24 @@
             </span>
     </div>
     <div style="height: 405px">
-    <div class="Filebox" style="height: 285px;display: none;">
-        <a>
-        <img src="/images/p_file.png" style="height: 150px;width: 150px;"/></a>
-    </div>
-    <div>
-    <p style="text-align: center"><a id="FileName" onclick="fileplay();"></a></p>
-    </div>
+        <div class="Filebox" style="height: 285px;display: none;">
+            <a>
+                <img src="/images/p_file.png" style="height: 150px;width: 150px;"/></a>
+        </div>
+        <div>
+            <p style="text-align: center"><a id="FileName" onclick="fileplay();"></a></p>
+        </div>
 
-    <div style="height: 100px;text-align:center">
-        <div style="width: 50%;float: left">
-        <input type="button" class="btn btn-primary " id="SaveToPan" onclick="SaveTo()" value="保存到网盘">
+        <div style="height: 100px;text-align:center">
+            <div style="width: 50%;float: left">
+                <input type="button" class="btn btn-primary " id="SaveToPan" onclick="SaveTo()" value="保存到网盘">
+            </div>
+            <div style="width: 50%;float: left">
+                <input type="button" class="btn btn-primary" id="DownloadFile" onclick="download()" value="本地下载">
+            </div>
+            <div style="width: 100%;height:60px;float: left">
+            </div>
         </div>
-        <div style="width: 50%;float: left">
-        <input type="button" class="btn btn-primary" id="DownloadFile" onclick="download()" value="本地下载">
-        </div>
-        <div style="width: 100%;height:60px;float: left">
-        </div>
-    </div>
     </div>
     <a href="/downloadApk?filename=pan_0.1.0.apk&&downloadPath=share" style="float: right;font-size: 16px">下载客户端的apk</a>
     <a  id="downloadApp" style="display: none"><span>此链接唤起app</span></a>
@@ -182,29 +182,29 @@
 
     //简单登录操作
     $("#doLogin").click(function (e) {
-            $.ajax({
-                type: "POST",
-                url: "api/v1/pan/user/login",
-                data: {
-                    "userName": $("#userName").val(),
-                    "password": $("#password").val()
-                },
-                dataType: "json",
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == "200") {
-                        //关闭按钮
-                        $("#closeLogin").click();
-                        $("#userLName").css("display","block");
-                        $("#userLName").text("您好，" + data.userName);
-                        $("#loginBtn").css("display","none");
-                    } else if (data.code == "500") {
-                        alert("密码错误！");
-                    } else {
-                        alert("用户不存在或账号密码不能为空！");
-                    }
+        $.ajax({
+            type: "POST",
+            url: "api/v1/pan/user/login",
+            data: {
+                "userName": $("#userName").val(),
+                "password": $("#password").val()
+            },
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                if (data.code == "200") {
+                    //关闭按钮
+                    $("#closeLogin").click();
+                    $("#userLName").css("display","block");
+                    $("#userLName").text("您好，" + data.userName);
+                    $("#loginBtn").css("display","none");
+                } else if (data.code == "500") {
+                    alert("密码错误！");
+                } else {
+                    alert("用户不存在或账号密码不能为空！");
                 }
-            });
+            }
+        });
     });
 
     $(function () {
@@ -269,11 +269,11 @@
                         'display':'block',
                         'float':'right',
                         'margin-right':'10px',
-                        });
+                    });
                     $("#DownloadFile").css({
                         'display':'block',
                         'margin-left':'10px',
-                        });
+                    });
                     // alert(file_name);
                 }
             }
@@ -281,7 +281,6 @@
     });
 
     function SaveTo() {
-        //alert("点击判断是否登录");
         var nowcode = $("#downloadLink").text();
         $.ajax({
             type: "POST",
@@ -289,16 +288,14 @@
             data: {link: nowcode},
             dataType: "json",
             success: function (data) {
-                if(data.code == "200"){
+                if(data.code == "200" ||data.code =="400"){
                     alert(data.msg);
-                   window.location.href = '/old';
-                    //这做一个模态框类似的登录接口，还是留在当前界面
-                }else{
+                    window.location.href = "/old";
+                }else {
                     alert(data.msg);
-                    $("#loginBtn").click();
                 }
             }
-        });
+            });
     }
 
     function downloadFile(url, fileName_download) {

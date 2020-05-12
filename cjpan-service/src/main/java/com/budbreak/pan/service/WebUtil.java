@@ -20,7 +20,9 @@ public class WebUtil {
         String token = null;
         if (cookies != null && cookies.length > 0 ) {
             List<Cookie> collect = Arrays.stream(cookies).filter(cookie -> cookie.getName().equals("x-auth-token")).collect(Collectors.toList());
-            token = collect.get(0).getValue();
+            if (collect.size()>0) {
+                token = collect.get(0).getValue();
+            }
         }
         return JwtUtils.getUsername(token);
     }

@@ -73,14 +73,14 @@ public class SecretServiceImpl extends ServiceImpl<SecretMapper, Secret> impleme
         boolean b = false;
         String userNameByRequest = WebUtil.getUserNameByRequest(request);
         if (userNameByRequest == null) {
-            return InvokeResult.failure("未登录！");
+            return InvokeResult.failure("未登录，请登录后保存！");
         } else {
             if (path == null) {
                 path = "/";
             }
             b = copyFileToMyPan(userNameByRequest, link, path);
             if (b == false) {
-                return InvokeResult.failure("保存失败！");
+                return InvokeResult.failure(408,"文件已被删除！");
             } else {
                 return InvokeResult.success("保存成功！");
             }
