@@ -43,6 +43,7 @@
         <version.mybatis-plus>3.1.2</version.mybatis-plus>
         <version.mybatis.spring>2.0.1</version.mybatis.spring>
         <version.auth.jwt>3.2.0</version.auth.jwt>
+        <version.jedis>2.2.2.RELEASE</version.jedis>
         <version.auth.jjwt>0.9.0</version.auth.jjwt>
         <version.mail>1.4.7</version.mail>
     </properties>
@@ -127,6 +128,12 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
                 <version>${version.springfox.swagger2}</version>
+            </dependency>
+            <!--redis-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${version.jedis}</version>
             </dependency>
             <dependency>
                 <groupId>io.springfox</groupId>
