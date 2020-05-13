@@ -98,9 +98,9 @@ public class AdminController {
             return InvokeResult.failure("用户名不能为空！");
         }
         //查询该用户名是否存在，若存在提示已存在
-        List<Code> codes = codeMapper.selectList(new LambdaQueryWrapper<Code>().eq(Code::getCustomName, customName));
-        if (codes.size() > 0){
-            return InvokeResult.failure("该用户已存在注册码");
+        Code code = codeMapper.selectOne(new LambdaQueryWrapper<Code>().eq(Code::getCustomName, customName));
+        if (code != null){
+            return InvokeResult.failure("该用户已存在注册码，注册码为:" +code.getRegisterCode());
         }
         String registerCode = PassWordCreate.createPassWord(6);
         Code verifyCode = new Code();
