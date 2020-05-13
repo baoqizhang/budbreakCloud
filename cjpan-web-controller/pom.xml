@@ -160,15 +160,5 @@
             <artifactId>shiro-spring</artifactId>
             <version>1.5.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-            <version>2.1.4.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-rabbit</artifactId>
-            <version>1.7.7.RELEASE</version>
-        </dependency>
     </dependencies>
 </project>
