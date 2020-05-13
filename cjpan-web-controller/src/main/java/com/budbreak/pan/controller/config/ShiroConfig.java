@@ -184,6 +184,8 @@ public class ShiroConfig {
         chainDefinition.addPathDefinition("/api/v1/pan/user/register", "noSessionCreation,anon");
         chainDefinition.addPathDefinition("/api/v1/link/secret/shareToMyPan", "noSessionCreation,anon");
         chainDefinition.addPathDefinition("/api/v1/pan/user/quit", "noSessionCreation,anon");
+        chainDefinition.addPathDefinition("/data/**", "anon");
+        chainDefinition.addPathDefinition("/static/**", "anon");
         chainDefinition.addPathDefinition("/images/**", "anon");
         chainDefinition.addPathDefinition("/favicon.ico", "anon");
         chainDefinition.addPathDefinition("/js/**", "anon");
