@@ -16,17 +16,17 @@
 #### 后台管理系统
 项目演示地址： [http://47.100.197.51:9651/old](http://47.100.197.51:9651/old)  
 
-![图片1.png](/document/images/1.png)
-![图片1.png](/document/images/图片2.png)
-![图片1.png](/document/images/图片3.png)
-![图片1.png](/document/images/图片4.png)
-![图片1.png](/document/images/图片5.png)
-![图片1.png](/document/images/图片6.png)
-![图片1.png](/document/images/图片7.png)
-![图片1.png](/document/images/图片8.png)
-![图片1.png](/document/images/图片9.png)
-![图片1.png](/document/images/图片10.png)
-![图片1.png](/document/images/图片11.png)
+![1.png](document/images/1.png)
+![图片2.png](document/images/图片2.png)
+![图片3.png](document/images/图片3.png)
+![图片4.png](document/images/图片4.png)
+![图片5.png](document/images/图片5.png)
+![图片6.png](document/images/图片6.png)
+![图片7.png](document/images/图片7.png)
+![图片8.png](document/images/图片8.png)
+![图片9.png](document/images/图片9.png)
+![图片10.png](document/images/图片10.png)
+![图片11.png](document/images/图片11.png)
 
 ### 组织结构
 
